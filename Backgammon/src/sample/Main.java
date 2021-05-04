@@ -1,7 +1,9 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,6 +17,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+
+    /**
+     * link util : https://www.youtube.com/watch?v=9XJicRt_FaI
+     * @param args
+     */
 
     public static void main(String[] args) {
         launch(args);
@@ -42,8 +49,10 @@ public class Main extends Application {
         //primaryStage.setFullScreenExitHint("lmao apasa q mic");
         //primaryStage.setFullScreenExitKeyCombination(KeyCodeCombination.valueOf("q"));
 
+        Parent ROOT = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
-        primaryStage.setScene(currentScene(root));
+//        primaryStage.setScene(currentScene(root);
+        primaryStage.setScene(new Scene(ROOT));
         primaryStage.show();//arata ce avem pana acum in stage
     }
     public Scene currentScene(Group root){
