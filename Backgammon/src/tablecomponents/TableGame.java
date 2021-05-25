@@ -35,11 +35,12 @@ public class TableGame extends Node {
         rightSide.getListTrianglesDownSide().get(0).colorCheckerType = 1;//pt negru
         rightSide.getListTrianglesDownSide().get(0).numberCheckers = 2;
         for (int i = 0; i < 2; i++) {
-            Checker checker = new Checker(radius, 1, strokeWidth,rightSide.getListTrianglesDownSide().get(0));
+            Checker checker = new Checker(radius, 1, strokeWidth, rightSide.getListTrianglesDownSide().get(0));
             checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             rightSide.getListTrianglesDownSide().get(0).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            rightSide.getListTrianglesDownSide().get(0).getListOfCheckers().add(checker);
         }
 
         xValue = rightSide.getListTrianglesDownSide().get(5).getXRight();
@@ -47,11 +48,12 @@ public class TableGame extends Node {
         rightSide.getListTrianglesDownSide().get(5).colorCheckerType = 0;//pt alb
         rightSide.getListTrianglesDownSide().get(5).numberCheckers = 5;
         for (int i = 0; i < 5; i++) {
-            Checker checker = new Checker(radius, 0, strokeWidth,rightSide.getListTrianglesDownSide().get(5));
+            Checker checker = new Checker(radius, 0, strokeWidth, rightSide.getListTrianglesDownSide().get(5));
             checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             rightSide.getListTrianglesDownSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            rightSide.getListTrianglesDownSide().get(5).getListOfCheckers().add(checker);
         }
 
 
@@ -66,6 +68,7 @@ public class TableGame extends Node {
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             leftSide.getListTrianglesDownSide().get(1).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            leftSide.getListTrianglesDownSide().get(1).getListOfCheckers().add(checker);
         }
         xValue = leftSide.getListTrianglesDownSide().get(5).getXRight();
         yValue = leftSide.tableArea.getY() + leftSide.tableArea.getHeight() - 25;
@@ -77,6 +80,7 @@ public class TableGame extends Node {
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             leftSide.getListTrianglesDownSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            leftSide.getListTrianglesDownSide().get(5).getListOfCheckers().add(checker);
         }
 
     }
@@ -90,11 +94,12 @@ public class TableGame extends Node {
         rightSide.getListTrianglesUpSide().get(0).colorCheckerType = 0;//pt alb
         rightSide.getListTrianglesUpSide().get(0).numberCheckers = 2;
         for (int i = 0; i < 2; i++) {
-            Checker checker = new Checker(radius, 0, strokeWidth,rightSide.getListTrianglesUpSide().get(0));
+            Checker checker = new Checker(radius, 0, strokeWidth, rightSide.getListTrianglesUpSide().get(0));
             checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             rightSide.getListTrianglesUpSide().get(0).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            rightSide.getListTrianglesUpSide().get(0).getListOfCheckers().add(checker);
         }
 
         xValue = rightSide.getListTrianglesUpSide().get(5).getXRight();
@@ -108,6 +113,7 @@ public class TableGame extends Node {
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             rightSide.getListTrianglesUpSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            rightSide.getListTrianglesUpSide().get(5).getListOfCheckers().add(checker);
         }
 
 
@@ -117,22 +123,24 @@ public class TableGame extends Node {
         leftSide.getListTrianglesUpSide().get(1).numberCheckers = 3;
         leftSide.getListTrianglesUpSide().get(1).colorCheckerType = 1;
         for (int i = 0; i < 3; i++) {
-            Checker checker = new Checker(radius, 1, strokeWidth,leftSide.getListTrianglesUpSide().get(1));
+            Checker checker = new Checker(radius, 1, strokeWidth, leftSide.getListTrianglesUpSide().get(1));
             checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             leftSide.getListTrianglesUpSide().get(1).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            leftSide.getListTrianglesUpSide().get(1).getListOfCheckers().add(checker);
         }
         xValue = leftSide.getListTrianglesUpSide().get(5).getXRight();
         yValue = leftSide.tableArea.getY() + 25;
         leftSide.getListTrianglesUpSide().get(5).numberCheckers = 5;
         leftSide.getListTrianglesUpSide().get(5).colorCheckerType = 0;
         for (int i = 0; i < 5; i++) {
-            Checker checker = new Checker(radius, 0, strokeWidth,leftSide.getListTrianglesUpSide().get(5));
+            Checker checker = new Checker(radius, 0, strokeWidth, leftSide.getListTrianglesUpSide().get(5));
             checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             leftSide.getListTrianglesUpSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
+            leftSide.getListTrianglesUpSide().get(5).getListOfCheckers().add(checker);
         }
     }
 
@@ -183,14 +191,15 @@ public class TableGame extends Node {
         return nodTabla;
     }
 
-    public List<Triangle> getListOfAllTriangles(){
+    public List<Triangle> getListOfAllTriangles() {
         return listOfAllTriangles;
     }
 
-    public BoardSide getLeftSide(){
+    public BoardSide getLeftSide() {
         return leftSide;
     }
-    public BoardSide getRightSide(){
-        return  rightSide;
+
+    public BoardSide getRightSide() {
+        return rightSide;
     }
 }

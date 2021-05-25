@@ -14,7 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Dices {
-    private static final double length = 100;
+    private static final double length = 60;
     private static final Rectangle square1 = new Rectangle(length, length);
     private static final Rectangle square2 = new Rectangle(length, length);
     //private static final Rectangle containerDices = new Rectangle(720, 50, 220, 900);
@@ -31,8 +31,8 @@ public class Dices {
 
         Text valueDice1 = new Text(String.valueOf(0));
         Text valueDice2 = new Text(String.valueOf(0));
-        valueDice1.setFont(Font.font("Comic Sans", 50));
-        valueDice2.setFont(Font.font("Comic Sans", 50));
+        valueDice1.setFont(Font.font("Comic Sans", 40));
+        valueDice2.setFont(Font.font("Comic Sans", 40));
         valueDice1.setFill(Color.WHITE);
         valueDice2.setFill(Color.WHITE);
 
@@ -57,7 +57,6 @@ public class Dices {
     }
 
     static public void rollDices() {
-        GameController.setDicesThrown(true);
         value1 = (int) (Math.random() * 5) + 1;
         value2 = (int) (Math.random() * 5) + 1;
 
@@ -72,10 +71,12 @@ public class Dices {
         GameController.setValueDice1(value1);
         GameController.setValueDice2(value2);
 
-        GameController.setSumAllMoves(value1+value2);
-        if(value1!=value2)
-            GameController.setCountAvailableMoves(3);
-        else
+        GameController.setSumAllMoves(value1 + value2);
+        if (value1 != value2)
+            GameController.setCountAvailableMoves(2);
+        else {
             GameController.setCountAvailableMoves(4);
+            GameController.setDoubleDices(true);
+        }
     }
 }
