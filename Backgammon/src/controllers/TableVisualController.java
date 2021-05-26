@@ -101,4 +101,8 @@ public class TableVisualController {
             reconfigureCheckersPositioning(cadre,newTriangle);
         }
     }
+    //called when the player is taking all the checkers from his/her house
+    public static void removeChckerFromTable(Checker checker){
+
+    }
 }

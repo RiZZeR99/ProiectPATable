@@ -20,11 +20,6 @@ public class GameController {
     private static short playerBlocked = -1;
     private static boolean doubleDices = false;
     private static int backUpDiceDouble = -1;
-    /*
-    SCHIMBAT INTR_un map ceva pt a seta pt fiecare triunghi o valoarea ce va repreze ta costul unei mutari
-    pe care o poate face un jucator
-    DONE
-     */
     private static final Map<Triangle, Integer> trianglesAvailable = new HashMap<>();
     private static boolean dicesThrown = false;
     private static int sumAllMoves = -1;
@@ -38,29 +33,44 @@ public class GameController {
         countAvailableMoves = count;
     }
 
-    public static int checkAvailableMoves() {
+    public static int countAvailableMoves() {
         /*
         function used to see how many possibilities a player has
          */
         int counterPossibleSimpleMoves = 0;
-        Checker testChecker;
-        int index1, index2;
-        for (Triangle triangle : gameScene.getTableGame().getListOfAllTriangles()) {
-            if (triangle != null && triangle.getColorCheckerType() == turn) {
-                if (turn == 1) {
-                    index1 = triangle.getIndex() + valueDice1;
-                    index2 = triangle.getIndex() + valueDice2;
-                } else {
-                    index1 = triangle.getIndex() - valueDice1;
-                    index2 = triangle.getIndex() - valueDice2;
-                }
-                if (accessNewTriangle(triangle.getIndex(), index1, valueDice1)) {
-                    counterPossibleSimpleMoves++;
-                }
-                if (accessNewTriangle(triangle.getIndex(), index2, valueDice2)) {
-                    counterPossibleSimpleMoves++;
+        int index1 = 0, index2 = 0;
+        if (playerBlocked != turn) {
+            //counting all the simple moves the player can make
+            for (Triangle triangle : gameScene.getTableGame().getListOfAllTriangles()) {
+                if (triangle != null && triangle.getColorCheckerType() == turn) {
+                    if (turn == 1) {
+                        index1 = triangle.getIndex() + valueDice1;
+                        index2 = triangle.getIndex() + valueDice2;
+                    } else {
+                        index1 = triangle.getIndex() - valueDice1;
+                        index2 = triangle.getIndex() - valueDice2;
+                    }
+                    if (accessNewTriangle(triangle.getIndex(), index1, valueDice1)) {
+                        counterPossibleSimpleMoves++;
+                    }
+                    if (accessNewTriangle(triangle.getIndex(), index2, valueDice2)) {
+                        counterPossibleSimpleMoves++;
+                    }
                 }
             }
+        } else {
+            if (turn == 0 && checkerToMove.isInJail()) {
+                //white searches in the house of the black
+                index1 = 24 - valueDice1 + 1;
+                index2 = 24 - valueDice2 + 1;
+            } else if (turn == 1 && checkerToMove.isInJail()) {
+                index1 = valueDice1;
+                index2 = valueDice2;
+                //black searches in the house of the white
+            }
+            if (addTrianglesForEscapeJail(index1, valueDice1) || addTrianglesForEscapeJail(index2, valueDice2))
+                counterPossibleSimpleMoves = 2;
+
         }
 
         return counterPossibleSimpleMoves;
@@ -100,7 +110,7 @@ public class GameController {
         turn = (short) (1 - turn);
         dicesThrown = false;
         System.out.println("Dati cu zarul. Jucatorul cu tura " + (1 - turn) + " a terminat");
-        if (checkAvailableMoves() == 0) {
+        if (countAvailableMoves() == 0) {
             System.out.println("Player " + turn + " nu are ce piese sa mute. Prin urmare pierde tura :(");
             turn = (short) (1 - turn);
         }
@@ -124,6 +134,7 @@ public class GameController {
         return false;
     }
 
+    @Important
     public static void makeMoveChecker(Checker checker, Triangle triangle) {
         if (dicesThrown) {
             //if the dices were thrown
@@ -193,23 +204,27 @@ public class GameController {
         }
     }
 
-    private static void addTrianglesForEscapeJail(int index, int valueDice) {
+    private static boolean addTrianglesForEscapeJail(int index, int valueDice) {
         if (index > 0 && index < 25) {
             if (gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType() == -1) {
                 gameScene.getTableGame().getListOfAllTriangles().get(index).getTriangleShape().setFill(Color.YELLOW);
                 gameScene.getTableGame().getListOfAllTriangles().get(index).setAvailableForChecker(true);
                 trianglesAvailable.put(gameScene.getTableGame().getListOfAllTriangles().get(index), valueDice);
+                return true;
             } else if (gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType() == turn) {
                 gameScene.getTableGame().getListOfAllTriangles().get(index).getTriangleShape().setFill(Color.YELLOW);
                 gameScene.getTableGame().getListOfAllTriangles().get(index).setAvailableForChecker(true);
                 trianglesAvailable.put(gameScene.getTableGame().getListOfAllTriangles().get(index), valueDice);
+                return true;
             } else if (gameScene.getTableGame().getListOfAllTriangles().get(index).getNumberCheckers() == 1 && gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType() != turn) {
                 gameScene.getTableGame().getListOfAllTriangles().get(index).getTriangleShape().setFill(Color.YELLOW);
                 gameScene.getTableGame().getListOfAllTriangles().get(index).setAvailableForChecker(true);
                 trianglesAvailable.put(gameScene.getTableGame().getListOfAllTriangles().get(index), valueDice);
                 indexesJailTriangle.add(index);
+                return true;
             }
         }
+        return false;
     }
 
     private static void addAvailableTriangle(int index, int indexTriangle, int valueDice) {
