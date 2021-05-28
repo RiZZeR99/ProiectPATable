@@ -1,5 +1,6 @@
 package tablecomponents;
 
+import controllers.TableVisualController;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -144,6 +145,50 @@ public class TableGame extends Node {
         }
     }
 
+    private void initHousesFull() {
+        double xValue = rightSide.getListTrianglesDownSide().get(0).getXRight();
+        double yValue = rightSide.tableArea.getY() + rightSide.tableArea.getHeight() - radius;
+
+        for (Triangle triangle : rightSide.getListTrianglesDownSide()
+        ) {
+            triangle.setColorCheckerType(0);
+            int counter=triangle.getIndex()<=3?3:2;
+            triangle.setNumberCheckers(counter);
+            for (int i = 0; i < counter; i++) {
+                Checker checker = new Checker(radius, 0, strokeWidth, triangle);
+                //checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+                //checker.getShapeChecker().setCenterY(yValue);
+                // yValue += 50;
+                triangle.getGroupCheckers().getChildren().add(checker.getShapeChecker());
+                triangle.getListOfCheckers().add(checker);
+            }
+            TableVisualController.reconfigureCheckersPositioning(1, triangle);
+//            xValue -= lengthTriangle;
+//            yValue = rightSide.tableArea.getY() + rightSide.tableArea.getHeight() - radius;
+        }
+        xValue = rightSide.getListTrianglesUpSide().get(0).getXRight();
+        yValue = rightSide.tableArea.getY() + 25;
+
+        for (Triangle triangle : rightSide.getListTrianglesUpSide()
+        ) {
+            triangle.setColorCheckerType(1);
+            int counter=triangle.getIndex()<=21?2:3;
+            triangle.setNumberCheckers(counter);
+            for (int i = 0; i < counter; i++) {
+                Checker checker = new Checker(radius, 1, strokeWidth, triangle);
+                //checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+                //checker.getShapeChecker().setCenterY(yValue);
+                //yValue -= 50;
+                triangle.getGroupCheckers().getChildren().add(checker.getShapeChecker());
+                triangle.getListOfCheckers().add(checker);
+            }
+              TableVisualController.reconfigureCheckersPositioning(3, triangle);
+//            xValue -= lengthTriangle;
+//            yValue = rightSide.tableArea.getY() + rightSide.tableArea.getHeight() - radius;
+        }
+
+    }
+
     private void initCheckers() {
         /*
        initialiasing predefined configuration for the table
@@ -152,6 +197,7 @@ public class TableGame extends Node {
         */
         initCheckerDown();
         initCheckersUp();
+        //initHousesFull();
         Collections.reverse(leftSide.getListTrianglesUpSide());
         Collections.reverse(rightSide.getListTrianglesUpSide());
         listOfAllTriangles.add(null);
