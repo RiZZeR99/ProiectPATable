@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-base-16-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-base-16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-fxml-16-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-graphics-16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-graphics-16-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-controls-16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-fxml-16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Backgammon/lib/javafx-controls-16-win.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

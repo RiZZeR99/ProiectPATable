@@ -76,7 +76,22 @@ public class GameController {
                     counterPossibleSimpleMoves = 2;
             }
         }
-
+        if(counterPossibleSimpleMoves==0)
+        {
+            System.out.println("Playerul nu mai are mutari!");
+            switch(turn){
+                case 0: {
+                    turn=1;
+                    break;
+                }
+                case 1: {
+                    turn=0;
+                    break;
+                }
+            }
+            dicesThrown=false;
+            changeTurn();
+        }
         return counterPossibleSimpleMoves;
     }
 
@@ -185,6 +200,7 @@ public class GameController {
                     //if the player can have moves
                     System.out.println("Player " + turn + " nu are ce piese sa mute. Prin urmare pierde tura :(");
                     turn = (short) (1 - turn);
+                    dicesThrown= false;
                     return;
                 }
             if (checker.getCurrentTriangle() != null) {//info about the selected checker
@@ -275,7 +291,7 @@ public class GameController {
 
     private static void addAvailableTriangle(int index, int indexTriangle, int valueDice) {
         boolean pos1;
-        if (sumAllMoves - valueDice >= 0 && valueDice > -1) {
+        if (sumAllMoves - valueDice >= 0 && valueDice > -1 ) {
             pos1 = (accessNewTriangle(index, indexTriangle, valueDice));
             if (pos1) {
                 gameScene.getTableGame().getListOfAllTriangles().get(indexTriangle).getTriangleShape().setFill(Color.YELLOW);

@@ -23,7 +23,7 @@ public class TableGame extends Node {
     private BoardSide leftSide;
     private BoardSide rightSide;
     private double lengthTriangle;
-    private final double lengthMiddleSeparator = 220;
+    private final double lengthMiddleSeparator = 120;
     private List<Triangle> listOfAllTriangles = new ArrayList<>();
 
     //0 pt alb 1 pt negru
@@ -37,7 +37,7 @@ public class TableGame extends Node {
         rightSide.getListTrianglesDownSide().get(0).numberCheckers = 2;
         for (int i = 0; i < 2; i++) {
             Checker checker = new Checker(radius, 1, strokeWidth, rightSide.getListTrianglesDownSide().get(0));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             rightSide.getListTrianglesDownSide().get(0).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -50,7 +50,7 @@ public class TableGame extends Node {
         rightSide.getListTrianglesDownSide().get(5).numberCheckers = 5;
         for (int i = 0; i < 5; i++) {
             Checker checker = new Checker(radius, 0, strokeWidth, rightSide.getListTrianglesDownSide().get(5));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             rightSide.getListTrianglesDownSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -65,7 +65,7 @@ public class TableGame extends Node {
         leftSide.getListTrianglesDownSide().get(1).colorCheckerType = 0;
         for (int i = 0; i < 3; i++) {
             Checker checker = new Checker(radius, 0, strokeWidth, leftSide.getListTrianglesDownSide().get(1));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             leftSide.getListTrianglesDownSide().get(1).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -77,7 +77,7 @@ public class TableGame extends Node {
         leftSide.getListTrianglesDownSide().get(5).colorCheckerType = 1;
         for (int i = 0; i < 5; i++) {
             Checker checker = new Checker(radius, 1, strokeWidth, leftSide.getListTrianglesDownSide().get(5));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue -= 50;
             leftSide.getListTrianglesDownSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -96,7 +96,7 @@ public class TableGame extends Node {
         rightSide.getListTrianglesUpSide().get(0).numberCheckers = 2;
         for (int i = 0; i < 2; i++) {
             Checker checker = new Checker(radius, 0, strokeWidth, rightSide.getListTrianglesUpSide().get(0));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             rightSide.getListTrianglesUpSide().get(0).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -110,7 +110,7 @@ public class TableGame extends Node {
         rightSide.getListTrianglesUpSide().get(5).numberCheckers = 5;
         for (int i = 0; i < 5; i++) {
             Checker checker = new Checker(radius, 1, strokeWidth, rightSide.getListTrianglesUpSide().get(5));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             rightSide.getListTrianglesUpSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -125,7 +125,7 @@ public class TableGame extends Node {
         leftSide.getListTrianglesUpSide().get(1).colorCheckerType = 1;
         for (int i = 0; i < 3; i++) {
             Checker checker = new Checker(radius, 1, strokeWidth, leftSide.getListTrianglesUpSide().get(1));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             leftSide.getListTrianglesUpSide().get(1).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -137,7 +137,7 @@ public class TableGame extends Node {
         leftSide.getListTrianglesUpSide().get(5).colorCheckerType = 0;
         for (int i = 0; i < 5; i++) {
             Checker checker = new Checker(radius, 0, strokeWidth, leftSide.getListTrianglesUpSide().get(5));
-            checker.getShapeChecker().setCenterX(xValue - lengthTriangle / 2);
+            checker.getShapeChecker().setCenterX(xValue - lengthTriangle + 10);
             checker.getShapeChecker().setCenterY(yValue);
             yValue += 50;
             leftSide.getListTrianglesUpSide().get(5).getGroupCheckers().getChildren().add(checker.getShapeChecker());
@@ -225,7 +225,7 @@ public class TableGame extends Node {
         middleSeparator.setY(scene.getHeight() / 2 - this.heightTable / 2);
         leftSide = new BoardSide('s', this);
         rightSide = new BoardSide('r', this);
-        lengthTriangle = 100;
+        lengthTriangle = 50;
         leftSide.drawHalfTable();
         rightSide.drawHalfTable();
         initCheckers();

@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 import tablecomponents.Dices;
 import tablecomponents.TableGame;
 
+import java.awt.*;
+
 
 public class GameScene {
     private TableGame tableGame;
@@ -28,8 +30,9 @@ public class GameScene {
 
     GameScene(Group root, Stage stage) {
         this.root = root;
-        sceneGame = new Scene(this.root, 1660, 1000, Color.SKYBLUE);
-        tableGame = new TableGame(1600, 900, this.sceneGame);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        sceneGame = new Scene(this.root, screenSize.getWidth(), screenSize.getHeight(), Color.SKYBLUE);
+        tableGame = new TableGame((int)screenSize.getWidth()-60, (int)screenSize.getHeight()-100, this.sceneGame);
         VBox jail = new VBox();
         jail.setSpacing(10);
         jail.setLayoutX(725);
@@ -38,8 +41,8 @@ public class GameScene {
         tableGame.drawTable();
         Button rollDices = new Button("Roll dices!");
         rollDices.setMinSize(60, 40);
-        rollDices.setLayoutY(900);
-        rollDices.setLayoutX(850);
+        rollDices.setLayoutY(600);
+        rollDices.setLayoutX(700);
         rollDices.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

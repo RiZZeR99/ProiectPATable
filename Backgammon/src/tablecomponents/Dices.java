@@ -57,8 +57,8 @@ public class Dices {
     }
 
     static public void rollDices() {
-        value1 = (int) (Math.random() * 5) + 1;
-        value2 = (int) (Math.random() * 5) + 1;
+        value1 = (int) (Math.random() * 6) + 1;
+        value2 = (int) (Math.random() * 6) + 1;
 
         ((Text) dice1.getChildren().get(1)).setText(String.valueOf(value1));
         ((Text) dice2.getChildren().get(1)).setText(String.valueOf(value2));

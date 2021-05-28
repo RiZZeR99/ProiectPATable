@@ -1,5 +1,7 @@
 package scenes;
 
+import java.awt.*;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -20,7 +22,8 @@ public class MenuScene {
 
     MenuScene(Group root, Stage stage) {
         this.root = root;
-        menuScene = new Scene(this.root, 1660, 1000, Color.SKYBLUE);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        menuScene = new Scene(this.root, screenSize.getWidth(), screenSize.getHeight(), Color.SKYBLUE);
         Group buttonsGroup = new Group();
         Text welcome = new Text("Bun venit la jocul de table");
         welcome.setFont(Font.font("Comic Sans", 50));
