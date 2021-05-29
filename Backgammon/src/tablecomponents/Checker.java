@@ -11,7 +11,8 @@ public class Checker {
     private double radius;
     private Triangle currentTriangle;
     private int colorValue;
-    private boolean inJail=false;
+    private boolean inJail = false;
+    private boolean isOut = false;
 
     public Checker(double raza, int colorValue, double strokeWidth, Triangle triangle) {
         this.currentTriangle = triangle;
@@ -31,10 +32,16 @@ public class Checker {
             public void handle(MouseEvent mouseEvent) {
                 System.out.println("Valori vechi:");
                 System.out.println("Coordonate checker:" + getShapeChecker().getCenterX() + "   " + getShapeChecker().getCenterY());
-                System.out.println("Layout checker: "+getShapeChecker().getLayoutX()+"   "+getShapeChecker().getLayoutY()+"\n");
-                GameController.makeMoveChecker(checker, checker.currentTriangle);
+                System.out.println("Layout checker: " + getShapeChecker().getLayoutX() + "   " + getShapeChecker().getLayoutY() + "\n");
+                if (!isOut) {
+                    GameController.makeMoveChecker(checker, checker.currentTriangle);
+                }
             }
         });
+    }
+
+    public void setIsOut(boolean out) {
+        isOut = out;
     }
 
     public boolean isInJail() {

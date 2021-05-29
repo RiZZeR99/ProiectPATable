@@ -2,6 +2,7 @@ package scenes;
 
 import java.awt.*;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -66,7 +67,8 @@ public class MenuScene {
         buttonExit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                exit(0);
+                Platform.exit();
+                stage.close();
             }
         });
         buttonNetworkPlay.setOnAction(new EventHandler<ActionEvent>() {

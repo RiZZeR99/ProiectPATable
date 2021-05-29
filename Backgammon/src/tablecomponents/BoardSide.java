@@ -25,9 +25,9 @@ public class BoardSide {
         this.side = side;
         if (side == 's')//daca e in stanga
         {
-            tableArea.setX(tableGame.tableArea.getX() + 50);
+            tableArea.setX(tableGame.tableArea.getX()+10);
         } else {//daca ii in dreapta
-            tableArea.setX(tableGame.tableArea.getX() + tableGame.tableArea.getWidth() / 2 + 150);
+            tableArea.setX(tableGame.tableArea.getX() + tableGame.tableArea.getWidth() / 2 );
         }
         tableArea.setY(tableGame.tableArea.getY() + 25);
     }

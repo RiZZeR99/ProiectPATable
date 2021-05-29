@@ -26,6 +26,7 @@ public class Main extends Application {
         Group rootMenu = new Group();//functioneaza ca un layer. root este ca un nod ce trebuie sa fie atribuit une scene noi. Fiecare scena are un root
         Group rootLoading = new Group();
         Group rootGame = new Group();
+        Group rootWinner = new Group();
 
 
         primaryStage.setTitle("Backgammon");
@@ -49,6 +50,7 @@ public class Main extends Application {
         ScenesFactory.setMenuScene(rootMenu, primaryStage);
         ScenesFactory.setGameScene(rootGame, primaryStage);
         ScenesFactory.setLoadingScene(rootLoading, primaryStage);
+        ScenesFactory.setWinnerScene(rootWinner,primaryStage);
 
         ScenesController.setNewScene(ScenesFactory.getMenuScene().getScene());
         primaryStage.show();//arata ce avem pana acum in stage

@@ -7,6 +7,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.*;
+
 public class LoadingScene {
     private Scene loadingScene;
     private Group root;
@@ -14,6 +16,7 @@ public class LoadingScene {
 
     LoadingScene(Group root, Stage stage) {
         this.root = root;
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         loadingScene = new Scene(this.root, 1660, 1000, Color.SKYBLUE);
 
         Text textLoading = new Text("Va rugam sa asteptati pana cand un alt jucator se conecteaza");

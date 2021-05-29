@@ -2,38 +2,36 @@ package controllers;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import scenes.GameScene;
+import scenes.ScenesFactory;
 import tablecomponents.Checker;
 import tablecomponents.Triangle;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameController {
-    private static short turn = 0;//white first
+    private static int turn = 0;//white first
     static int valueDice1;
     static int valueDice2;
     private static GameScene gameScene;
     private static Checker checkerToMove;
-    private static short playerBlocked = -1;
     private static boolean doubleDices = false;
     private static int backUpDiceDouble = -1;
     private static final Map<Triangle, Integer> trianglesAvailable = new HashMap<>();
     private static boolean dicesThrown = false;
     private static int sumAllMoves = -1;
-    private static int countAvailableMoves = -1;
-    private static int whiteInJail = 0;
-    private static int blackInJail = 0;
-    private static int currentNumberCheckersWhite = 15;
+    private static int availableMoves = -1;
+    private static Text textInfo;
+    private static int currentNumberCheckersWhite = 15;//used fot taking the checkers from the house
     private static int currentNumberCheckersBlack = 15;
-    private static List<Integer> indexesJailTriangle = new ArrayList<>();//the triangles that are vulnerable for an enemy checker
+    private static Set<Integer> indexesJailTriangle = new HashSet<>();//the triangles that are vulnerable for an enemy checker
+    private static VBox jail;
+    private static List<Checker> checkersInJail = new ArrayList<>();
+    private static boolean enableBearOff = false;
+    private static List<Checker> outWhiteCheckers = new ArrayList<>();
+    private static List<Checker> outBlackCheckers = new ArrayList<>();
 
-
-    public static void setCounterMoves(int count) {
-        countAvailableMoves = count;
-    }
 
     public static int countAvailableMoves() {
         /*
@@ -41,41 +39,81 @@ public class GameController {
          */
         int counterPossibleSimpleMoves = 0;
         int index1 = 0, index2 = 0;
-        if (playerBlocked != turn && playerBlocked != 2) {
-            //counting all the simple moves the player can make
-            for (Triangle triangle : gameScene.getTableGame().getListOfAllTriangles()) {
-                if (triangle != null && triangle.getColorCheckerType() == turn) {
-                    if (turn == 1) {
-                        index1 = triangle.getIndex() + valueDice1;
-                        index2 = triangle.getIndex() + valueDice2;
-                    } else {
-                        index1 = triangle.getIndex() - valueDice1;
-                        index2 = triangle.getIndex() - valueDice2;
+        //if (playerBlocked != turn && playerBlocked != 2) {
+        //counting all the simple moves the player can make
+        if (!checkAllCheckersInTheHouse()) {
+            if (countCheckersInJain(turn) == 0) {
+                for (Triangle triangle : gameScene.getTableGame().getListOfAllTriangles()) {
+                    if (triangle != null && triangle.getColorCheckerType() == turn) {
+                        if (turn == 1) {
+                            index1 = triangle.getIndex() + valueDice1;
+                            index2 = triangle.getIndex() + valueDice2;
+                        } else {
+                            index1 = triangle.getIndex() - valueDice1;
+                            index2 = triangle.getIndex() - valueDice2;
+                        }
+                        if (accessNewTriangle(triangle.getIndex(), index1, valueDice1)) {
+                            counterPossibleSimpleMoves++;
+                        }
+                        if (accessNewTriangle(triangle.getIndex(), index2, valueDice2)) {
+                            counterPossibleSimpleMoves++;
+                        }
                     }
-                    if (accessNewTriangle(triangle.getIndex(), index1, valueDice1)) {
-                        counterPossibleSimpleMoves++;
-                    }
-                    if (accessNewTriangle(triangle.getIndex(), index2, valueDice2)) {
-                        counterPossibleSimpleMoves++;
+                }
+            } else {
+                counterPossibleSimpleMoves = 0;
+                for (Checker checker : checkersInJail) {
+                    if (checker.getColorValue() == turn) {
+                        if (turn == 0) {
+                            //white searches in the house of the black
+                            index1 = 24 - valueDice1 + 1;
+                            index2 = 24 - valueDice2 + 1;
+                        } else if (turn == 1) {
+                            index1 = valueDice1;
+                            index2 = valueDice2;
+                            //black searches in the house of the white
+                        }
+                        if (addTrianglesForEscapeJail(index1, valueDice1))
+                            counterPossibleSimpleMoves++;
+                        if (addTrianglesForEscapeJail(index2, valueDice2))
+                            counterPossibleSimpleMoves++;
                     }
                 }
             }
         } else {
             counterPossibleSimpleMoves = 0;
-            if (checkerToMove.isInJail()) {
-                if (turn == 0) {
-                    //white searches in the house of the black
-                    index1 = 24 - valueDice1 + 1;
-                    index2 = 24 - valueDice2 + 1;
-                } else if (turn == 1 && checkerToMove.isInJail()) {
-                    index1 = valueDice1;
-                    index2 = valueDice2;
-                    //black searches in the house of the white
+            if (turn == 0) {
+                for (int i = 6; i >= 1; i--) {
+                    if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == turn &&
+                            gameScene.getTableGame().getListOfAllTriangles().get(i).getNumberCheckers() > 0) {
+                        index1 = i - valueDice1;
+                        index2 = i - valueDice2;
+                        if (index1 > 0) {
+                            if (accessNewTriangle(i, index1, valueDice1)) counterPossibleSimpleMoves++;
+                        } else counterPossibleSimpleMoves++;
+                        if (index2 > 0) {
+                            if (accessNewTriangle(i, index2, valueDice2)) counterPossibleSimpleMoves++;
+                        } else counterPossibleSimpleMoves++;
+                    }
                 }
-                if (addTrianglesForEscapeJail(index1, valueDice1) || addTrianglesForEscapeJail(index2, valueDice2))
-                    counterPossibleSimpleMoves = 2;
+            } else {
+                for (int i = 19; i <= 24; i++) {
+                    if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == turn &&
+                            gameScene.getTableGame().getListOfAllTriangles().get(i).getNumberCheckers() > 0) {
+                        index1 = i + valueDice1;
+                        index2 = i + valueDice2;
+                        if (index1 < 25) {
+                            if (accessNewTriangle(i, index1, valueDice1)) counterPossibleSimpleMoves++;
+                        } else counterPossibleSimpleMoves++;
+                        if (index2 < 25) {
+                            if (accessNewTriangle(i, index2, valueDice2)) counterPossibleSimpleMoves++;
+                        } else counterPossibleSimpleMoves++;
+                    }
+
+                }
             }
         }
+
         return counterPossibleSimpleMoves;
     }
 
@@ -88,37 +126,34 @@ public class GameController {
         backUpDiceDouble = valueDice1;
     }
 
-    public static short getPlayerBlocked() {
-        return playerBlocked;
-    }
-
-    public static void setPlayerBlocked(short playerBlocked) {
-        GameController.playerBlocked = playerBlocked;
-    }
-
     public static void setSumAllMoves(int newSum) {
         sumAllMoves = newSum;
     }
 
     public static void setCountAvailableMoves(int count) {
-        countAvailableMoves = count;
+        availableMoves = count;
     }
 
     public static void startGame(GameScene gameSceneCurrent) {
         System.out.println("sa inceapa jocul");
         gameScene = gameSceneCurrent;
+        jail = (VBox) gameScene.getRoot().getChildren().get(2);
+        textInfo = (Text) gameScene.getRoot().getChildren().get(3);
     }
 
-    public static void changeTurn() {
+    public static void changeTurn(String message) {
         turn = (short) (1 - turn);
         dicesThrown = false;
-        System.out.println("Dati cu zarul. Jucatorul cu tura " + (1 - turn) + " a terminat");
+        //"Dati cu zarul. Jucatorul cu tura " + (1 - turn) + " a terminat"
+        System.out.println(message);
+        TableVisualController.setTextInfo(message, textInfo);
         /**
          * TODO: de setat un text ca jucatorul respectiv a terminat de mutat
          */
     }
 
     public static boolean accessNewTriangle(int currentIndex, int newIndex, int costMove) {
+        //this function tells that if a triangle at a new position is accesible from a current position
         if (newIndex < 25 && newIndex > 0) {
             if (turn == gameScene.getTableGame().getListOfAllTriangles().get(currentIndex).getColorCheckerType()) {
                 if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == -1) {
@@ -138,11 +173,12 @@ public class GameController {
         return false;
     }
 
-    public static boolean canTakeOff() {
+    public static boolean checkAllCheckersInTheHouse() {
+        //function used fot taking of the checkers from the HOUSE
+        int countCheckers = 0;
+        int i;
         if (turn == 1) {
             //check the house of the black player
-            int i;
-            int countCheckers = 0;
             for (i = 24; i >= 19; i--) {
                 if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == 1) {
                     countCheckers += gameScene.getTableGame().getListOfAllTriangles().get(i).getNumberCheckers();
@@ -151,8 +187,6 @@ public class GameController {
             if (countCheckers == currentNumberCheckersBlack) return true;
         } else {
             //check the house of the white player
-            int i;
-            int countCheckers = 0;
             for (i = 6; i >= 1; i--) {
                 if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == 0) {
                     countCheckers += gameScene.getTableGame().getListOfAllTriangles().get(i).getNumberCheckers();
@@ -163,35 +197,253 @@ public class GameController {
         return false;
     }
 
-    private static void takeOffChecker(Checker checker) {
-        Triangle currentTriangle = checker.getCurrentTriangle();
+    private static int countCheckersInJain(int turn) {
+        int count = 0;
+        for (Checker checker : checkersInJail) {
+            if (checker.getColorValue() == turn) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static void prepareForBearingOff() {
+        if (checkerToMove.getCurrentTriangle() != null)
+            if (checkerToMove.getCurrentTriangle().getIndex() >= 19 || checkerToMove.getCurrentTriangle().getIndex() <= 6) {
+                int index1, index2;
+                int currentPosition = checkerToMove.getCurrentTriangle().getIndex();
+                boolean farthest = true;
+                if (turn == 0) {
+                    for (int i = currentPosition + 1; i <= 6; i++) {
+                        if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == turn) {
+                            farthest = false;
+                            break;
+                        }
+                    }
+                    index1 = checkerToMove.getCurrentTriangle().getIndex() - valueDice1;
+                    index2 = checkerToMove.getCurrentTriangle().getIndex() - valueDice2;
+                    //first dice
+                    if (index1 > 0 && valueDice1 > -1) {
+                        addAvailableTriangle(currentPosition, index1, valueDice1);
+                    } else if ((farthest || index1 == 0) && valueDice1 > -1) {
+                        enableBearOff = true;
+                    }
+                    //second dice
+                    if (index2 > 0 && valueDice2 > -1) {
+                        addAvailableTriangle(currentPosition, index2, valueDice2);
+                    } else if ((farthest || index2 == 0) && valueDice2 > -1) {
+                        enableBearOff = true;
+                    }
+
+                } else {
+                    for (int i = currentPosition - 1; i >= 19; i--) {
+                        if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == turn) {
+                            farthest = false;
+                            break;
+                        }
+                    }
+                    index1 = checkerToMove.getCurrentTriangle().getIndex() + valueDice1;
+                    index2 = checkerToMove.getCurrentTriangle().getIndex() + valueDice2;
+                    //first dice
+                    if (index1 < 25 && valueDice1 > -1) {
+                        addAvailableTriangle(currentPosition, index1, valueDice1);
+                    } else if ((farthest || index1 == 25) && valueDice1 > -1) {
+                        enableBearOff = true;
+                    }
+                    //second dice
+                    if (index2 < 25 && valueDice2 > -1) {
+                        addAvailableTriangle(currentPosition, index2, valueDice2);
+                    } else if ((farthest || index2 == 25) && valueDice2 > -1) {
+                        enableBearOff = true;
+                    }
+                }
+            }
+    }
+
+    private static boolean isFarthest() {
+        boolean farthest = true;
+        if (turn == 0) {
+            for (int i = checkerToMove.getCurrentTriangle().getIndex() + 1; i <= 6; i++) {
+                if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == turn) {
+                    farthest = false;
+                    break;
+                }
+            }
+        } else {
+            for (int i = checkerToMove.getCurrentTriangle().getIndex() - 1; i >= 19; i--) {
+                if (gameScene.getTableGame().getListOfAllTriangles().get(i).getColorCheckerType() == turn) {
+                    farthest = false;
+                    break;
+                }
+            }
+        }
+        return farthest;
+    }
+
+    public static void bearOff(int typeButton) {
+        if (enableBearOff) {
+            Triangle oldTriangle = checkerToMove.getCurrentTriangle();
+            if (checkerToMove.getColorValue() == turn && typeButton == turn) {
+                if (turn == 0) {
+                    int foundDice = -1;
+//                    if ((checkerToMove.getCurrentTriangle().getIndex() - valueDice1 == 0||isFarthest())&&valueDice1!=-1) {
+//                        sumAllMoves -= valueDice1;
+//                        availableMoves--;
+//                        valueDice1 = -1;
+//                    } else
+//                    if ((checkerToMove.getCurrentTriangle().getIndex() - valueDice2 == 0 || isFarthest()) && valueDice2 != -1) {
+//                        sumAllMoves -= valueDice2;
+//                        availableMoves--;
+//                        valueDice2 = -1;
+//                    }
+                    if (checkerToMove.getCurrentTriangle().getIndex() - valueDice1 == 0) {
+                        sumAllMoves -= valueDice1;
+                        availableMoves--;
+                        foundDice = valueDice1;
+                        valueDice1 = -1;
+                    } else if (checkerToMove.getCurrentTriangle().getIndex() - valueDice1 < 0 && isFarthest()) {
+                        sumAllMoves -= valueDice1;
+                        availableMoves--;
+                        foundDice = valueDice1;
+                        valueDice1 = -1;
+                    }
+
+                    if (foundDice == -1) {
+                        if (checkerToMove.getCurrentTriangle().getIndex() - valueDice2 == 0) {
+                            sumAllMoves -= valueDice2;
+                            availableMoves--;
+                            foundDice = valueDice2;
+                            valueDice2 = -1;
+                        } else if (checkerToMove.getCurrentTriangle().getIndex() - valueDice2 < 0 && isFarthest()) {
+                            sumAllMoves -= valueDice2;
+                            availableMoves--;
+                            foundDice = valueDice2;
+                            valueDice2 = -1;
+                        }
+                    }
+                    TableVisualController.resetCheckerColor(checkerToMove);
+                    oldTriangle.setNumberCheckers(oldTriangle.getNumberCheckers() - 1);
+                    oldTriangle.getGroupCheckers().getChildren().remove(checkerToMove.getShapeChecker());
+                    oldTriangle.getListOfCheckers().remove(checkerToMove);
+                    TableVisualController.reconfigureCheckersPositioning(1, oldTriangle);
+
+                    gameScene.getTableGame().getContainerWhite().getChildren().add(checkerToMove.getShapeChecker());
+                    outWhiteCheckers.add(checkerToMove);
+                    currentNumberCheckersWhite--;
+                    if (currentNumberCheckersWhite == 0) {
+                        ScenesFactory.getWinnerScene().setTextMessage("Castigatorul este jucatorul alb");
+                        ScenesController.setNewScene(ScenesFactory.getWinnerScene().getScene());
+                    }
+
+                } else {
+                    int foundDice=-1;
+                    if (checkerToMove.getCurrentTriangle().getIndex() + valueDice1 == 25) {
+                        sumAllMoves -= valueDice1;
+                        availableMoves--;
+                        foundDice = valueDice1;
+                        valueDice1 = -1;
+                    } else if (checkerToMove.getCurrentTriangle().getIndex() + valueDice1 >25 && isFarthest()) {
+                        sumAllMoves -= valueDice1;
+                        availableMoves--;
+                        foundDice = valueDice1;
+                        valueDice1 = -1;
+                    }
+
+                    if (foundDice == -1) {
+                        if (checkerToMove.getCurrentTriangle().getIndex() + valueDice2 == 25) {
+                            sumAllMoves -= valueDice2;
+                            availableMoves--;
+                            foundDice = valueDice2;
+                            valueDice2 = -1;
+                        } else if (checkerToMove.getCurrentTriangle().getIndex() + valueDice2 >25 && isFarthest()) {
+                            sumAllMoves -= valueDice2;
+                            availableMoves--;
+                            foundDice = valueDice2;
+                            valueDice2 = -1;
+                        }
+                    }
+//                    if (checkerToMove.getCurrentTriangle().getIndex() + valueDice1 == 25 || (isFarthest() && valueDice1 != -1)) {
+//                        sumAllMoves -= valueDice1;
+//                        availableMoves--;
+//                        valueDice1 = -1;
+//
+//                    } else if (checkerToMove.getCurrentTriangle().getIndex() + valueDice2 == 25 || (isFarthest() && valueDice2 != -1)) {
+//                        sumAllMoves -= valueDice2;
+//                        availableMoves--;
+//                        valueDice2 = -1;
+//                    }
+                    TableVisualController.resetCheckerColor(checkerToMove);
+                    oldTriangle.setNumberCheckers(oldTriangle.getNumberCheckers() - 1);
+                    oldTriangle.getGroupCheckers().getChildren().remove(checkerToMove.getShapeChecker());
+                    oldTriangle.getListOfCheckers().remove(checkerToMove);
+                    TableVisualController.reconfigureCheckersPositioning(3, oldTriangle);
+
+                    gameScene.getTableGame().getContainerBlack().getChildren().add(checkerToMove.getShapeChecker());
+                    outBlackCheckers.add(checkerToMove);
+                    currentNumberCheckersBlack--;
+
+                    if (currentNumberCheckersBlack == 0) {
+                        ScenesFactory.getWinnerScene().setTextMessage("Castigatorul este jucatorul negru");
+                        ScenesController.setNewScene(ScenesFactory.getWinnerScene().getScene());
+                    }
+
+                }
+                enableBearOff = false;
+                checkerToMove.setIsOut(true);
+                checkerToMove.setCurrentTriangle(null);
+                if (checkerToMove != null) {
+                    TableVisualController.resetCheckerColor(checkerToMove);
+                }
+                for (int i = 1; i <= 24; i++) {
+                    gameScene.getTableGame().getListOfAllTriangles().get(i).resetColor();
+                }
+                trianglesAvailable.clear();
+            }
+            if (availableMoves > 0) {
+                if (sumAllMoves == 0) {
+                    if (doubleDices) {
+                        doubleDices = false;
+                        sumAllMoves = 2 * backUpDiceDouble;
+                        valueDice1 = valueDice2 = backUpDiceDouble;
+                        backUpDiceDouble = -1;
+                        trianglesAvailable.clear();
+                        enableBearOff = false;
+                    } else {
+                        trianglesAvailable.clear();
+                        enableBearOff = false;
+                        changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
+                        dicesThrown = false;
+
+                    }
+                }
+            } else {
+                //if the are not any available moves
+                trianglesAvailable.clear();
+                changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
+                dicesThrown = false;
+                enableBearOff = false;
+            }
+        }
 
     }
 
     @Important
     public static void makeMoveChecker(Checker checker, Triangle triangle) {
+        //this function is called when the player clicks on a checker
         if (dicesThrown) {
+            System.out.println("Valori zar 1 :: " + valueDice1 + "  si zar 2 :: " + valueDice2);
             //if the dices were thrown
-            trianglesAvailable.clear();
-            if (checkerToMove != null) {//reset the color of a previsiously selected checker
+            enableBearOff = false;
+            if (checkerToMove != null) {//reset the color of a previous selected checker
                 TableVisualController.resetCheckerColor(checkerToMove);
             }
-            for (int i = 1; i < 24; i++) {
+            for (int i = 1; i <= 24; i++) {
                 gameScene.getTableGame().getListOfAllTriangles().get(i).resetColor();
             }
             trianglesAvailable.clear();
             checkerToMove = checker;
-            if (checkerToMove.isInJail())
-                if (playerBlocked == 2 || turn == playerBlocked)
-                    if (countAvailableMoves() == 0) {
-                        //if the player can not have moves
-                        System.out.println("Player " + turn + " nu are ce piese sa mute. Prin urmare pierde tura :(");
-                        valueDice1 = -1;
-                        valueDice2 = -1;
-                        turn = (short) (1 - turn);
-                        dicesThrown = false;
-                        return;
-                    }
+
             if (checker.getCurrentTriangle() != null) {//info about the selected checker
                 System.out.println("Index checker triunghi: " + checker.getCurrentTriangle().getIndex());
                 System.out.println("Index triunghi dat: " + triangle.getIndex());
@@ -199,15 +451,18 @@ public class GameController {
             }
 
             TableVisualController.setColorSelectedChecker(checkerToMove);
-            int colorChecker = checker.getColorValue();
-            if (turn == colorChecker) {
+            if (turn == checkerToMove.getColorValue()) {
+//                if (countAvailableMoves() == 0) {
+//                    changeTurn();
+//                }
                 //if the player requesting to move a checker has its turn
-                if (playerBlocked != turn && playerBlocked != 2) {
+                TableVisualController.setTextInfo("Jucatorul cu tura " + turn + " are voie sa mute", textInfo);
+                if (countCheckersInJain(turn) == 0) {
                     //if the player has not any checker in the jail
 
-                    if (canTakeOff()) {
+                    if (checkAllCheckersInTheHouse()) {
                         //if the player can take off its checkers
-                        takeOffChecker(checkerToMove);
+                        prepareForBearingOff();
                         return;
                     }
                     int index = checker.getCurrentTriangle().getIndex();
@@ -230,33 +485,45 @@ public class GameController {
                      * */
                     addAvailableTriangle(index, indexTriangle1, valueDice1);//first dice
                     addAvailableTriangle(index, indexTriangle2, valueDice2);//second dice
-                } else {
-                    System.out.println("jucatorule  " +
-                            turn + "  esti blocat");
+                } else if (checkerToMove.isInJail()) {
+
+                    if (countAvailableMoves() == 0) {
+                        System.out.println("jucatorul cu tura " + turn + " nu are mutari");
+                        TableVisualController.setTextInfo("Jucatorul cu tura " + turn + " pierde tura. 0 mutari posibile. Dati cu zarul", textInfo);
+                        changeTurn("Jucatorul cu tura " + turn + " is va pierde tura deoarece nu are mutari posibile");
+                        dicesThrown = false;
+                        return;
+                    }
+
                     int index1 = 0, index2 = 0;
-                    if (turn == 0 && checkerToMove.isInJail()) {
+                    if (turn == 0) {
                         //white searches in the house of the black
                         index1 = 24 - valueDice1 + 1;
                         index2 = 24 - valueDice2 + 1;
-                    } else if (turn == 1 && checkerToMove.isInJail()) {
+                    } else if (turn == 1) {
                         index1 = valueDice1;
                         index2 = valueDice2;
                         //black searches in the house of the white
                     }
-                    if (checkerToMove.isInJail()) {
-                        addTrianglesForEscapeJail(index1, valueDice1);
-                        addTrianglesForEscapeJail(index2, valueDice2);
-
-                    }
+                    addTrianglesForEscapeJail(index1, valueDice1);
+                    addTrianglesForEscapeJail(index2, valueDice2);
+                } else {
+                    System.out.println("jucatorule  " +
+                            turn + "  esti blocat");
+                    TableVisualController.setTextInfo("jucatorule  " +
+                            turn + "  esti blocat", textInfo);
                 }
-            } else
+            } else {
                 System.out.println("Nu este piesa ta");
-
+                TableVisualController.setTextInfo("Nu este piesa ta jucator " + turn, textInfo);
+            }
         }
     }
 
     private static boolean addTrianglesForEscapeJail(int index, int valueDice) {
-        if (index > 0 && index < 25 && turn == gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType()) {
+        //here i look for triangle that can be used to escape a checker from the jail
+        //it is adding auto the triangle to the list
+        if (index > 0 && index < 25 && valueDice > -1) {
             if (gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType() == -1) {
                 gameScene.getTableGame().getListOfAllTriangles().get(index).getTriangleShape().setFill(Color.YELLOW);
                 gameScene.getTableGame().getListOfAllTriangles().get(index).setAvailableForChecker(true);
@@ -279,9 +546,10 @@ public class GameController {
     }
 
     private static void addAvailableTriangle(int index, int indexTriangle, int valueDice) {
-        boolean pos1;
+        //this function is used for checkers that are normal (not in jail or in the process of bearing off)
+        boolean pos1 = false;
         if (sumAllMoves - valueDice >= 0 && valueDice > -1 && turn == gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType()) {
-            pos1 = (accessNewTriangle(index, indexTriangle, valueDice));
+            pos1 = accessNewTriangle(index, indexTriangle, valueDice);
             if (pos1) {
                 gameScene.getTableGame().getListOfAllTriangles().get(indexTriangle).getTriangleShape().setFill(Color.YELLOW);
                 gameScene.getTableGame().getListOfAllTriangles().get(indexTriangle).setAvailableForChecker(true);
@@ -290,16 +558,8 @@ public class GameController {
         }
     }
 
-    public static int getValueDice1() {
-        return valueDice1;
-    }
-
     public static void setValueDice1(int valueDice1) {
         GameController.valueDice1 = valueDice1;
-    }
-
-    public static int getValueDice2() {
-        return valueDice2;
     }
 
     public static void setValueDice2(int valueDice2) {
@@ -307,25 +567,31 @@ public class GameController {
     }
 
     public static void putChecker(Triangle triangle) {
-        if (trianglesAvailable.keySet().contains(triangle)) {
+        enableBearOff = false;
+        if (trianglesAvailable.keySet().contains(triangle) && checkerToMove != null) {
+            if (checkerToMove.isInJail()) {//if the checker that is gonna be moved was in hail
+                checkersInJail.remove(checkerToMove);
+                jail.getChildren().remove(checkerToMove.getShapeChecker());
+                checkerToMove.setCurrentTriangle(triangle);
+            }
             if (indexesJailTriangle.contains(triangle.getIndex())) {
                 /*
                 this works as I see
                 the triangle that will receive a checker has one checker of the other player
                 we will put that old checker in the jail
                 */
-                VBox jail = (VBox) gameScene.getRoot().getChildren().get(2);
+                //VBox jail = (VBox) gameScene.getRoot().getChildren().get(2);
                 Checker unlucky = triangle.getListOfCheckers().get(0);
                 jail.getChildren().add(unlucky.getShapeChecker());
-                if (unlucky.getColorValue() == 0) {
-                    /*
-                    we increase the number of checker in jail so when a player moves a checker from the jail
-                    we verify that there are still checkers of his/her color in the jail
-                    */
-                    whiteInJail++;
-                } else {
-                    blackInJail++;
-                }
+//                if (unlucky.getColorValue() == 0) {
+//                    /*
+//                    we increase the number of checker in jail so when a player moves a checker from the jail
+//                    we verify that there are still checkers of his/her color in the jail
+//                    */
+//                    whiteInJail++;
+//                } else {
+//                    blackInJail++;
+//                }
                 Triangle oldTriangle = unlucky.getCurrentTriangle();
                 oldTriangle.getListOfCheckers().remove(unlucky);
                 oldTriangle.getGroupCheckers().getChildren().remove(unlucky.getShapeChecker());
@@ -333,32 +599,8 @@ public class GameController {
 
                 unlucky.setCurrentTriangle(null);
                 unlucky.setInJail(true);
-                //indexesJailTriangle.remove((Integer) triangle.getIndex());
-                if (playerBlocked == -1) {
-                    playerBlocked = (short) (1 - turn);
-                } else {
-                    playerBlocked = 2;
-                }
+                checkersInJail.add(unlucky);
             }
-            indexesJailTriangle.clear();
-            if (checkerToMove.isInJail()) {//if the checker that is gonna be moved was in hail
-                if (checkerToMove.getColorValue() == 0) {
-                    whiteInJail--;
-                    if (whiteInJail == 0 && playerBlocked == 0)
-                        playerBlocked = -1;
-                    else if (whiteInJail == 0 && playerBlocked == 0) {
-                        playerBlocked = 1;
-                    }
-                }
-                if (checkerToMove.getColorValue() == 1) {
-                    blackInJail--;
-                    if (blackInJail == 0 && playerBlocked == 1)
-                        playerBlocked = -1;
-                    else if (blackInJail == 0 && playerBlocked == 1)
-                        playerBlocked = 0;
-                }
-            }
-
             TableVisualController.addCheckerToTriangle(checkerToMove, triangle);
             triangle.setColorCheckerType(checkerToMove.getColorValue());//in case the triangle hadn't before another checker
             TableVisualController.resetCheckerColor(checkerToMove);
@@ -368,14 +610,11 @@ public class GameController {
                 triangleAvailable.resetColor();//reseting the color
                 triangle.setAvailableForChecker(false);//reseting the availability for a checker
             }
+            indexesJailTriangle.clear();
 
-           /*for (int i = 1; i < 24; i++) {
-                gameScene.getTableGame().getListOfAllTriangles().get(i).resetColor();
-                gameScene.getTableGame().getListOfAllTriangles().get(i).setAvailableForChecker(false);
-                //it could be better
-            }*/
+
             sumAllMoves -= trianglesAvailable.get(triangle);
-            countAvailableMoves--;
+            availableMoves--;
             if (valueDice1 == trianglesAvailable.get(triangle)) valueDice1 = -1;
             else if (valueDice2 == trianglesAvailable.get(triangle)) valueDice2 = -1;
 
@@ -384,7 +623,7 @@ public class GameController {
             System.out.println("Coordonate checker:" + checkerToMove.getShapeChecker().getCenterX() + "   " + checkerToMove.getShapeChecker().getCenterY());
             System.out.println("Layout checker: " + checkerToMove.getShapeChecker().getLayoutX() + "   " + checkerToMove.getShapeChecker().getLayoutY() + "\n");
 
-            if (countAvailableMoves > 0) {
+            if (availableMoves > 0) {
                 if (sumAllMoves == 0) {
                     if (doubleDices) {
                         doubleDices = false;
@@ -394,16 +633,18 @@ public class GameController {
                         trianglesAvailable.clear();
                     } else {
                         trianglesAvailable.clear();
-                        changeTurn();
+                        changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
                         dicesThrown = false;
 
                     }
                 }
             } else {
+                //if the are not any available moves
                 trianglesAvailable.clear();
-                changeTurn();
+                changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
                 dicesThrown = false;
             }
+            checkerToMove = null;
         }
     }
 
@@ -413,5 +654,20 @@ public class GameController {
 
     public static void setDicesThrown(boolean dicesThrown) {
         GameController.dicesThrown = dicesThrown;
+        trianglesAvailable.clear();
+        indexesJailTriangle.clear();
+        checkerToMove = null;
+        if (countAvailableMoves() == 0) {
+            System.out.println("jucatorul cu tura " + turn + " nu are mutari");
+            TableVisualController.setTextInfo("Jucatorul cu tura " + turn + " pierde tura. 0 mutari posibile. Dati cu zarul", textInfo);
+            changeTurn("Jucatorul cu tura " + turn + " is va pierde tura deoarece nu are mutari posibile");
+            dicesThrown = false;
+        }
+
     }
+
+    public static int getTurn() {
+        return turn;
+    }
+
 }

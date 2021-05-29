@@ -7,6 +7,17 @@ public class ScenesFactory {
     private static LoadingScene loadingScene;
     private static MenuScene menuScene;
     private static GameScene gameScene;
+    private  static WinnerScene winnerScene;
+
+    public static WinnerScene getWinnerScene() {
+        return winnerScene;
+    }
+
+    public static void setWinnerScene(Group root,Stage stage){
+        if(winnerScene==null){
+            winnerScene=new WinnerScene(root,stage);
+        }
+    }
 
     public static LoadingScene getLoadingScene() {
         return loadingScene;

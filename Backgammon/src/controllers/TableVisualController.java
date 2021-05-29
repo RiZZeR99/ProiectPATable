@@ -3,6 +3,7 @@ package controllers;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import scenes.GameScene;
 import tablecomponents.Checker;
 import tablecomponents.Triangle;
@@ -38,6 +39,10 @@ public class TableVisualController {
             yCenterChecker += offset;
         }
 
+    }
+
+    public static void setTextInfo(String info, Text textInfo){
+        textInfo.setText(info);
     }
 
     public static void resetCheckerColor(Checker checker) {
