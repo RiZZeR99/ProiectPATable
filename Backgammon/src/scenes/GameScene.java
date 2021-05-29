@@ -35,14 +35,14 @@ public class GameScene {
         tableGame = new TableGame((int)screenSize.getWidth()-60, (int)screenSize.getHeight()-100, this.sceneGame);
         VBox jail = new VBox();
         jail.setSpacing(10);
-        jail.setLayoutX(725);
-        jail.setLayoutY(700);
+        jail.setLayoutX(screenSize.getWidth()/2-100);
+        jail.setLayoutY(screenSize.getHeight()*3/4);
         Dices.initDices();
         tableGame.drawTable();
         Button rollDices = new Button("Roll dices!");
         rollDices.setMinSize(60, 40);
-        rollDices.setLayoutY(600);
-        rollDices.setLayoutX(700);
+        rollDices.setLayoutY(screenSize.getHeight()*3/4);
+        rollDices.setLayoutX(screenSize.getWidth()/2+50);
         rollDices.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

@@ -41,7 +41,7 @@ public class GameController {
          */
         int counterPossibleSimpleMoves = 0;
         int index1 = 0, index2 = 0;
-        if (playerBlocked != turn) {
+        if (playerBlocked != turn && playerBlocked != 2) {
             //counting all the simple moves the player can make
             for (Triangle triangle : gameScene.getTableGame().getListOfAllTriangles()) {
                 if (triangle != null && triangle.getColorCheckerType() == turn) {
@@ -75,22 +75,6 @@ public class GameController {
                 if (addTrianglesForEscapeJail(index1, valueDice1) || addTrianglesForEscapeJail(index2, valueDice2))
                     counterPossibleSimpleMoves = 2;
             }
-        }
-        if(counterPossibleSimpleMoves==0)
-        {
-            System.out.println("Playerul nu mai are mutari!");
-            switch(turn){
-                case 0: {
-                    turn=1;
-                    break;
-                }
-                case 1: {
-                    turn=0;
-                    break;
-                }
-            }
-            dicesThrown=false;
-            changeTurn();
         }
         return counterPossibleSimpleMoves;
     }
@@ -136,16 +120,18 @@ public class GameController {
 
     public static boolean accessNewTriangle(int currentIndex, int newIndex, int costMove) {
         if (newIndex < 25 && newIndex > 0) {
-            if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == -1) {
-                //return ("triunghi index " + newIndex + " valabil adica ii gol");
-                return true;
-            } else if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == gameScene.getTableGame().getListOfAllTriangles().get(currentIndex).getColorCheckerType()) {
-                //return ("triunghi valabil la index " + newIndex + "care are aceleasi checkers");
-                return true;
-            } else if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getNumberCheckers() == 1 && gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() != turn) {
-                //return ("Tringhi valabil la index " + newIndex + " care are o piesa inamica");
-                indexesJailTriangle.add(newIndex);
-                return true;
+            if (turn == gameScene.getTableGame().getListOfAllTriangles().get(currentIndex).getColorCheckerType()) {
+                if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == -1) {
+                    //return ("triunghi index " + newIndex + " valabil adica ii gol");
+                    return true;
+                } else if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == gameScene.getTableGame().getListOfAllTriangles().get(currentIndex).getColorCheckerType()) {
+                    //return ("triunghi valabil la index " + newIndex + "care are aceleasi checkers");
+                    return true;
+                } else if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getNumberCheckers() == 1 && gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() != turn) {
+                    //return ("Tringhi valabil la index " + newIndex + " care are o piesa inamica");
+                    indexesJailTriangle.add(newIndex);
+                    return true;
+                }
             }
         }
         //return "Nici un triunghi valabil pentru zarul cu valoare " + (newIndex - currentIndex);
@@ -196,13 +182,16 @@ public class GameController {
             trianglesAvailable.clear();
             checkerToMove = checker;
             if (checkerToMove.isInJail())
-                if (countAvailableMoves() == 0) {
-                    //if the player can have moves
-                    System.out.println("Player " + turn + " nu are ce piese sa mute. Prin urmare pierde tura :(");
-                    turn = (short) (1 - turn);
-                    dicesThrown= false;
-                    return;
-                }
+                if (playerBlocked == 2 || turn == playerBlocked)
+                    if (countAvailableMoves() == 0) {
+                        //if the player can not have moves
+                        System.out.println("Player " + turn + " nu are ce piese sa mute. Prin urmare pierde tura :(");
+                        valueDice1 = -1;
+                        valueDice2 = -1;
+                        turn = (short) (1 - turn);
+                        dicesThrown = false;
+                        return;
+                    }
             if (checker.getCurrentTriangle() != null) {//info about the selected checker
                 System.out.println("Index checker triunghi: " + checker.getCurrentTriangle().getIndex());
                 System.out.println("Index triunghi dat: " + triangle.getIndex());
@@ -213,14 +202,14 @@ public class GameController {
             int colorChecker = checker.getColorValue();
             if (turn == colorChecker) {
                 //if the player requesting to move a checker has its turn
-                if (playerBlocked != turn) {
+                if (playerBlocked != turn && playerBlocked != 2) {
                     //if the player has not any checker in the jail
 
-                        if(canTakeOff()){
-                            //if the player can take off its checkers
-                            takeOffChecker(checkerToMove);
-                            return;
-                        }
+                    if (canTakeOff()) {
+                        //if the player can take off its checkers
+                        takeOffChecker(checkerToMove);
+                        return;
+                    }
                     int index = checker.getCurrentTriangle().getIndex();
                     int indexTriangle1;
                     int indexTriangle2;
@@ -267,7 +256,7 @@ public class GameController {
     }
 
     private static boolean addTrianglesForEscapeJail(int index, int valueDice) {
-        if (index > 0 && index < 25) {
+        if (index > 0 && index < 25 && turn == gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType()) {
             if (gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType() == -1) {
                 gameScene.getTableGame().getListOfAllTriangles().get(index).getTriangleShape().setFill(Color.YELLOW);
                 gameScene.getTableGame().getListOfAllTriangles().get(index).setAvailableForChecker(true);
@@ -291,7 +280,7 @@ public class GameController {
 
     private static void addAvailableTriangle(int index, int indexTriangle, int valueDice) {
         boolean pos1;
-        if (sumAllMoves - valueDice >= 0 && valueDice > -1 ) {
+        if (sumAllMoves - valueDice >= 0 && valueDice > -1 && turn == gameScene.getTableGame().getListOfAllTriangles().get(index).getColorCheckerType()) {
             pos1 = (accessNewTriangle(index, indexTriangle, valueDice));
             if (pos1) {
                 gameScene.getTableGame().getListOfAllTriangles().get(indexTriangle).getTriangleShape().setFill(Color.YELLOW);
@@ -345,19 +334,28 @@ public class GameController {
                 unlucky.setCurrentTriangle(null);
                 unlucky.setInJail(true);
                 //indexesJailTriangle.remove((Integer) triangle.getIndex());
-                playerBlocked = (short) (1 - turn);
+                if (playerBlocked == -1) {
+                    playerBlocked = (short) (1 - turn);
+                } else {
+                    playerBlocked = 2;
+                }
             }
             indexesJailTriangle.clear();
-            if (checkerToMove.isInJail()) {
+            if (checkerToMove.isInJail()) {//if the checker that is gonna be moved was in hail
                 if (checkerToMove.getColorValue() == 0) {
                     whiteInJail--;
                     if (whiteInJail == 0 && playerBlocked == 0)
                         playerBlocked = -1;
+                    else if (whiteInJail == 0 && playerBlocked == 0) {
+                        playerBlocked = 1;
+                    }
                 }
                 if (checkerToMove.getColorValue() == 1) {
                     blackInJail--;
                     if (blackInJail == 0 && playerBlocked == 1)
                         playerBlocked = -1;
+                    else if (blackInJail == 0 && playerBlocked == 1)
+                        playerBlocked = 0;
                 }
             }
 
