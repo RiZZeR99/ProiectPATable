@@ -1,9 +1,5 @@
 package tablecomponents;
 
-/*
- * X:720.0  Width:  220.0   Y:   50.0   Height:   900.0
- * the area where the dices are thrown
- */
 
 import controllers.GameController;
 import javafx.scene.Group;

@@ -5,16 +5,17 @@ import java.awt.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controllers.ScenesController;
 
-import static java.lang.System.exit;
 
 
 public class MenuScene {
@@ -25,7 +26,7 @@ public class MenuScene {
         this.root = root;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         menuScene = new Scene(this.root, screenSize.getWidth(), screenSize.getHeight(), Color.SKYBLUE);
-        Group buttonsGroup = new Group();
+        VBox buttonsGroup = new VBox();
         Text welcome = new Text("Bun venit la jocul de table");
         welcome.setFont(Font.font("Comic Sans", 50));
         welcome.setFill(Color.ORANGERED);
@@ -36,22 +37,16 @@ public class MenuScene {
         Button buttonNetworkPlay = new Button("Joaca in retea");
         Button buttonExit = new Button("Exit");
         Button playOffline = new Button("Joaca singur");
-
+        ;
 
         playOffline.setMinSize(80, 30);
         playOffline.setMaxSize(200, 30);
-        playOffline.setLayoutX(this.menuScene.getWidth() / 2 - playOffline.getLayoutBounds().getWidth() / 2);
-        playOffline.setLayoutY(400);
 
         buttonExit.setMinSize(80, 30);
         buttonExit.setMaxSize(80, 30);
-        buttonExit.setLayoutX(this.menuScene.getWidth() / 2 - buttonExit.getLayoutBounds().getWidth() / 2);
-        buttonExit.setLayoutY(600);
 
         buttonNetworkPlay.setMinSize(80, 30);
         buttonNetworkPlay.setMaxSize(200, 30);
-        buttonNetworkPlay.setLayoutX(this.menuScene.getWidth() / 2 - buttonNetworkPlay.getLayoutBounds().getWidth() / 2);
-        buttonNetworkPlay.setLayoutY(500);
 
         buttonNetworkPlay.setWrapText(true);
         buttonExit.setWrapText(true);
@@ -77,8 +72,11 @@ public class MenuScene {
                 ScenesController.setNewScene(ScenesFactory.getLoadingScene().getScene());
             }
         });
-
-        buttonsGroup.getChildren().addAll(buttonNetworkPlay, playOffline, buttonExit);
+        buttonsGroup.getChildren().addAll(playOffline,buttonNetworkPlay, buttonExit);
+        buttonsGroup.setAlignment(Pos.CENTER);
+        buttonsGroup.setLayoutY(screenSize.getHeight()/3);
+        buttonsGroup.setLayoutX(screenSize.getWidth()/2-50);
+        buttonsGroup.setSpacing(50);
         root.getChildren().addAll(welcome, buttonsGroup);
     }
 
