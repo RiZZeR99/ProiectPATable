@@ -12,7 +12,7 @@ Moraru George-Octavian 2A3
 4. Realizarea scenelor de selectare a limbajului, meniu-lui si a asteptarii de conectare la retea 
 
 Musteata Robert Andrei 2A3     
-1. Internationalizare
-2. Desenarea scenei cu tabla si scena cu jucatorul castigator
-3. Implementarea logicii tablei(mutarile efective, zaruri, verificarea mutari ce se pot realiza, blocarea jucatorilor )   
-4. Structurarea proiectului
+1. Internationalizare partiala (creare de fisiere properties si folosirea lor in program) cu limbile romana, engleza si franceza
+2. Desenarea scenei cu tabla (scalare dupa ecran) si scena cu jucatorul castigator
+3. Implementarea logicii tablei(mutarile efective, zaruri, verificarea mutari ce se pot realiza, blocarea jucatorilor,scoaterea pieselor )   
+4. Structurarea proiectului in pachete si clasele respective cu rolurile lor
