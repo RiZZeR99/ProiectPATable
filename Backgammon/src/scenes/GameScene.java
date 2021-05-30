@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sample.Main;
 import tablecomponents.Dices;
 import tablecomponents.TableGame;
 
@@ -24,6 +25,7 @@ public class GameScene {
     public TableGame getTableGame() {
         return tableGame;
     }
+    private boolean enableReset=false;
 
     public Group getRoot() {
         return root;
@@ -36,7 +38,7 @@ public class GameScene {
         tableGame = new TableGame((int) screenSize.getWidth() - 60, (int) screenSize.getHeight() - 100, this.sceneGame);
         VBox jail = new VBox();
         Text statusGame = new Text("Status Joc aici");
-        Button rollDices = new Button("Roll dices!");
+        Button rollDices = new Button(Main.contentButtons.getString("dices"));
 
 
         statusGame.setFont(Font.font("Comic Sans", this.sceneGame.getHeight()/20));
@@ -54,7 +56,7 @@ public class GameScene {
 
         rollDices.setMinSize(60, 40);
         rollDices.setLayoutY(screenSize.getHeight() * 3 / 4);
-        rollDices.setLayoutX(screenSize.getWidth() / 2 -100);
+        rollDices.setLayoutX(screenSize.getWidth() / 2 -150);
         rollDices.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -70,16 +72,16 @@ public class GameScene {
         Dices.getDices().toFront();
         rollDices.toFront();
         root.getChildren().addAll(rollDices, jail, statusGame);
-        /**
-         * configuration for each player
-         * to draw the checkers
-         * alb ===>>>> 0
-         * negru ===>>>> 1z
-         */
     }
 
     public Scene getScene() {
         GameController.startGame(this);
         return sceneGame;
+    }
+    public void setEnableReset(){
+        enableReset=true;
+    }
+    public boolean getEnableReset(){
+        return enableReset;
     }
 }

@@ -7,15 +7,26 @@ public class ScenesFactory {
     private static LoadingScene loadingScene;
     private static MenuScene menuScene;
     private static GameScene gameScene;
-    private  static WinnerScene winnerScene;
+    private static WinnerScene winnerScene;
+    private static LanguageScene languageScene;
+
+    public static LanguageScene getLanguageScene(){
+        return languageScene;
+    }
+
+    public static void setLanguageScene(Group root,Stage stage){
+        if(languageScene==null){
+            languageScene=new LanguageScene(root,stage);
+        }
+    }
 
     public static WinnerScene getWinnerScene() {
         return winnerScene;
     }
 
-    public static void setWinnerScene(Group root,Stage stage){
-        if(winnerScene==null){
-            winnerScene=new WinnerScene(root,stage);
+    public static void setWinnerScene(Group root, Stage stage) {
+        if (winnerScene == null) {
+            winnerScene = new WinnerScene(root, stage);
         }
     }
 
@@ -25,7 +36,7 @@ public class ScenesFactory {
 
     public static void setLoadingScene(Group root, Stage stage) {
         if (loadingScene == null) {
-            loadingScene=new LoadingScene(root,stage);
+            loadingScene = new LoadingScene(root, stage);
         }
     }
 
@@ -33,9 +44,9 @@ public class ScenesFactory {
         return menuScene;
     }
 
-    public static void setMenuScene(Group root,Stage stage) {
+    public static void setMenuScene(Group root, Stage stage) {
         if (menuScene == null) {
-            menuScene=new MenuScene(root,stage);
+            menuScene = new MenuScene(root, stage);
         }
     }
 
@@ -43,9 +54,11 @@ public class ScenesFactory {
         return gameScene;
     }
 
-    public static void setGameScene(Group root,Stage stage) {
+    public static void setGameScene(Group root, Stage stage) {
         if (gameScene == null) {
-            gameScene=new GameScene(root,stage);
+            gameScene = new GameScene(root, stage);
+        } else if (gameScene.getEnableReset()) {
+            gameScene = new GameScene(root, stage);
         }
     }
 }

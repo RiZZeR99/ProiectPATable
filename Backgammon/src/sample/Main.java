@@ -4,9 +4,11 @@ import controllers.ScenesController;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 import scenes.ScenesFactory;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class Main extends Application {
 
@@ -20,39 +22,42 @@ public class Main extends Application {
         launch(args);
     }
 
+    public static String buttonsTexts;
+    public static String gameTexts;
+    public static String screensTexts;
+    public static Locale locale;
+    public static ResourceBundle contentButtons;
+    public static ResourceBundle contentGame;
+    public static ResourceBundle contentScreens;
+
+    public static void changeLanguage(String language, String country) {
+        locale = new Locale(language, country);
+        contentButtons = ResourceBundle.getBundle(buttonsTexts, locale);
+        contentGame = ResourceBundle.getBundle(gameTexts, locale);
+        contentScreens = ResourceBundle.getBundle(screensTexts, locale);
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ScenesController.createController(primaryStage);
-        Group rootMenu = new Group();//functioneaza ca un layer. root este ca un nod ce trebuie sa fie atribuit une scene noi. Fiecare scena are un root
-        Group rootLoading = new Group();
-        Group rootGame = new Group();
-        Group rootWinner = new Group();
 
+        buttonsTexts = "resources.btnText.ButtonsText";
+        gameTexts = "resources.statusGame.StatusGame";
+        screensTexts = "resources.screenMessages.ScreenMessages";
+        locale = Locale.getDefault();
+        contentButtons = ResourceBundle.getBundle(buttonsTexts, locale);
+        contentGame = ResourceBundle.getBundle(gameTexts, locale);
+        contentScreens = ResourceBundle.getBundle(screensTexts, locale);
+        System.out.println(contentScreens.getString("welcome"));
+        Group languageRoot = new Group();
+
+        ScenesController.createController(primaryStage);
 
         primaryStage.setTitle("Backgammon");
         Image icon = new Image("/images/icon_BackGammon.ico");
         primaryStage.getIcons().add(icon);
 
-        //primaryStage.setWidth(1280);
-        //primaryStage.setHeight(980);
-        //primaryStage.setResizable(false);//daca vreau sa nu poata faca resize
-
-        //primaryStage.setX(50);
-        //primaryStage.setY(50);
-        //cele 2 spun unde sa plaseze imaginea
-
-        // primaryStage.setFullScreen(true);
-        primaryStage.setFullScreenExitHint("lmao apasa q mic");
-        primaryStage.setFullScreenExitKeyCombination(KeyCodeCombination.valueOf("q"));
-
-
-
-        ScenesFactory.setMenuScene(rootMenu, primaryStage);
-        ScenesFactory.setGameScene(rootGame, primaryStage);
-        ScenesFactory.setLoadingScene(rootLoading, primaryStage);
-        ScenesFactory.setWinnerScene(rootWinner,primaryStage);
-
-        ScenesController.setNewScene(ScenesFactory.getMenuScene().getScene());
-        primaryStage.show();//arata ce avem pana acum in stage
+        ScenesFactory.setLanguageScene(languageRoot, primaryStage);
+        ScenesController.setNewScene(ScenesFactory.getLanguageScene().getScene());
+        primaryStage.show();
     }
 }

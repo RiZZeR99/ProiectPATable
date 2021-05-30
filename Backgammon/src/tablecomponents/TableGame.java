@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import sample.Main;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -234,8 +235,8 @@ public class TableGame extends Node {
         middleSeparator.setY(scene.getHeight() / 2 - this.heightTable / 2);
         leftSide = new BoardSide('s', this);
         rightSide = new BoardSide('r', this);
-        Button putWhite = new Button("Scoate alba");
-        Button putBlack = new Button("Scoate neagra");
+        Button putWhite = new Button(Main.contentButtons.getString("bearOffWhite"));
+        Button putBlack = new Button(Main.contentButtons.getString("bearOffBlack"));
 
         lengthTriangle = leftSide.tableArea.getWidth() / 6;
         leftSide.drawHalfTable();
@@ -245,9 +246,9 @@ public class TableGame extends Node {
         Rectangle test2 = new Rectangle(100, 100);
         test2.setFill(Color.YELLOW);
         containerWhite.setLayoutY(tableArea.getY() + 30);
-        containerWhite.setLayoutX(rightSide.tableArea.getX() + rightSide.tableArea.getWidth() + 15);
+        containerWhite.setLayoutX(rightSide.tableArea.getX() + rightSide.tableArea.getWidth() + 5);
         containerBlack.setLayoutY(tableArea.getY() + 30);
-        containerBlack.setLayoutX(rightSide.tableArea.getX() + rightSide.tableArea.getWidth() + 95);
+        containerBlack.setLayoutX(rightSide.tableArea.getX() + rightSide.tableArea.getWidth() + 100);
         putWhite.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -290,4 +291,6 @@ public class TableGame extends Node {
     public BoardSide getRightSide() {
         return rightSide;
     }
+
+
 }

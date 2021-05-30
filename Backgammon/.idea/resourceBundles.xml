@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ResourceBundleManager">
+    <file url="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_en.properties" />
+    <file url="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_ro.properties" />
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_en.properties" />
+      <file value="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_ro.properties" />
+      <base-name>ButtonsText</base-name>
+    </custom-resource-bundle>
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_en.properties" />
+      <file value="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_fr.properties" />
+      <file value="file://$PROJECT_DIR$/src/resources/btnText/ButtonsText_ro.properties" />
+      <base-name>ButtonsText</base-name>
+    </custom-resource-bundle>
+  </component>
+</project>

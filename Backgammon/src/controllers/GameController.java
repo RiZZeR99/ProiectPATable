@@ -3,11 +3,13 @@ package controllers;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import sample.Main;
 import scenes.GameScene;
 import scenes.ScenesFactory;
 import tablecomponents.Checker;
 import tablecomponents.Triangle;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 public class GameController {
@@ -142,32 +144,23 @@ public class GameController {
     public static void changeTurn(String message) {
         turn = (short) (1 - turn);
         dicesThrown = false;
-        //"Dati cu zarul. Jucatorul cu tura " + (1 - turn) + " a terminat"
         System.out.println(message);
         TableVisualController.setTextInfo(message, textInfo);
-        /**
-         * TODO: de setat un text ca jucatorul respectiv a terminat de mutat
-         */
     }
 
     public static boolean accessNewTriangle(int currentIndex, int newIndex, int costMove) {
-        //this function tells that if a triangle at a new position is accesible from a current position
         if (newIndex < 25 && newIndex > 0) {
             if (turn == gameScene.getTableGame().getListOfAllTriangles().get(currentIndex).getColorCheckerType()) {
                 if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == -1) {
-                    //return ("triunghi index " + newIndex + " valabil adica ii gol");
                     return true;
                 } else if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() == gameScene.getTableGame().getListOfAllTriangles().get(currentIndex).getColorCheckerType()) {
-                    //return ("triunghi valabil la index " + newIndex + "care are aceleasi checkers");
                     return true;
                 } else if (gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getNumberCheckers() == 1 && gameScene.getTableGame().getListOfAllTriangles().get(newIndex).getColorCheckerType() != turn) {
-                    //return ("Tringhi valabil la index " + newIndex + " care are o piesa inamica");
                     indexesJailTriangle.add(newIndex);
                     return true;
                 }
             }
         }
-        //return "Nici un triunghi valabil pentru zarul cu valoare " + (newIndex - currentIndex);
         return false;
     }
 
@@ -320,7 +313,11 @@ public class GameController {
                     outWhiteCheckers.add(checkerToMove);
                     currentNumberCheckersWhite--;
                     if (currentNumberCheckersWhite == 0) {
-                        ScenesFactory.getWinnerScene().setTextMessage("Castigatorul este jucatorul alb");
+                        String pattern = Main.contentScreens.getString("winner");
+                        Object[] param = {Main.contentScreens.getString("white")};
+                        String result = new MessageFormat(pattern).format(param);
+                        ScenesFactory.getWinnerScene().setTextMessage(result);
+                        ScenesFactory.getGameScene().setEnableReset();
                         ScenesController.setNewScene(ScenesFactory.getWinnerScene().getScene());
                     }
 
@@ -362,7 +359,14 @@ public class GameController {
                     currentNumberCheckersBlack--;
 
                     if (currentNumberCheckersBlack == 0) {
-                        ScenesFactory.getWinnerScene().setTextMessage("Castigatorul este jucatorul negru");
+                        String pattern = Main.contentScreens.getString("winner");
+                        Object[] param = {Main.contentScreens.getString("black")};
+                        String result = new MessageFormat(pattern).format(param);
+                        ScenesFactory.getWinnerScene().setTextMessage(result);
+                        ScenesFactory.getGameScene().setEnableReset();
+                        ScenesController.setNewScene(ScenesFactory.getWinnerScene().getScene());
+                        ScenesFactory.getWinnerScene().setTextMessage(result);
+                        ScenesFactory.getGameScene().setEnableReset();
                         ScenesController.setNewScene(ScenesFactory.getWinnerScene().getScene());
                     }
 
@@ -390,7 +394,7 @@ public class GameController {
                     } else {
                         trianglesAvailable.clear();
                         enableBearOff = false;
-                        changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
+                        changeTurn(getText("donePrevious",turn));
                         dicesThrown = false;
 
                     }
@@ -398,7 +402,7 @@ public class GameController {
             } else {
                 //if the are not any available moves
                 trianglesAvailable.clear();
-                changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
+                changeTurn(getText("donePrevious",turn));
                 dicesThrown = false;
                 enableBearOff = false;
             }
@@ -430,8 +434,10 @@ public class GameController {
 
             TableVisualController.setColorSelectedChecker(checkerToMove);
             if (turn == checkerToMove.getColorValue()) {
+
                 //if the player requesting to move a checker has its turn
-                TableVisualController.setTextInfo("Jucatorul cu tura " + turn + " are voie sa mute", textInfo);
+
+                TableVisualController.setTextInfo(getText("currentPlayer", turn), textInfo);
                 if (countCheckersInJain(turn) == 0) {
                     //if the player has not any checker in the jail
 
@@ -478,12 +484,11 @@ public class GameController {
                 } else {
                     System.out.println("jucatorule  " +
                             turn + "  esti blocat");
-                    TableVisualController.setTextInfo("jucatorule  " +
-                            turn + "  esti blocat", textInfo);
+                    TableVisualController.setTextInfo(getText("blocked", turn), textInfo);
                 }
             } else {
                 System.out.println("Nu este piesa ta");
-                TableVisualController.setTextInfo("Nu este piesa ta jucator " + turn, textInfo);
+                TableVisualController.setTextInfo(getText("notYourPiece", turn), textInfo);
             }
         }
     }
@@ -580,7 +585,6 @@ public class GameController {
             System.out.println("Valori noi:");
             System.out.println("Coordonate checker:" + checkerToMove.getShapeChecker().getCenterX() + "   " + checkerToMove.getShapeChecker().getCenterY());
             System.out.println("Layout checker: " + checkerToMove.getShapeChecker().getLayoutX() + "   " + checkerToMove.getShapeChecker().getLayoutY() + "\n");
-
             checkerToMove = null;
             if (availableMoves > 0) {
                 if (sumAllMoves == 0) {
@@ -592,7 +596,7 @@ public class GameController {
                         trianglesAvailable.clear();
                     } else {
                         trianglesAvailable.clear();
-                        changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
+                        changeTurn(getText("donePrevious", turn));
                         dicesThrown = false;
                         return;
                     }
@@ -600,7 +604,7 @@ public class GameController {
             } else {
                 //if the are not any available moves
                 trianglesAvailable.clear();
-                changeTurn("Dati cu zarul. Jucatorul cu tura " + (turn) + " a terminat");
+                changeTurn(getText("donePrevious", turn));
                 dicesThrown = false;
                 return;
             }
@@ -620,8 +624,8 @@ public class GameController {
         */
         if (countAvailableMoves() == 0) {
             System.out.println("jucatorul cu tura " + turn + " nu are mutari");
-            TableVisualController.setTextInfo("Jucatorul cu tura " + turn + " pierde tura. 0 mutari posibile. Dati cu zarul", textInfo);
-            changeTurn("Jucatorul cu tura " + turn + " is va pierde tura deoarece nu are mutari posibile");
+            TableVisualController.setTextInfo(getText("noMoves", turn), textInfo);
+            changeTurn(getText("noMoves", turn));
             dicesThrown = false;
             return false;
         }
@@ -633,9 +637,21 @@ public class GameController {
         trianglesAvailable.clear();
         indexesJailTriangle.clear();
         checkerToMove = null;
-        TableVisualController.setTextInfo("Tura jucator "+turn, textInfo);
+        TableVisualController.setTextInfo(getText("turn", turn), textInfo);
         checkAvailableMoves();
 
+    }
+
+    private static String getText(String patternGiven, int turn) {
+        String pattern = Main.contentGame.getString(patternGiven);
+        Object[] paramBlack = {Main.contentScreens.getString("black")};
+        Object[] paramWhite = {Main.contentScreens.getString("white")};
+        String result;
+        if (turn == 0)
+            result = new MessageFormat(pattern).format(paramWhite);
+        else
+            result = new MessageFormat(pattern).format(paramBlack);
+        return result;
     }
 
     public static int getTurn() {

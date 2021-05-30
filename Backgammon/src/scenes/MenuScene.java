@@ -15,7 +15,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controllers.ScenesController;
-
+import sample.Main;
 
 
 public class MenuScene {
@@ -24,20 +24,20 @@ public class MenuScene {
 
     MenuScene(Group root, Stage stage) {
         this.root = root;
+        double maxLength=-1;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         menuScene = new Scene(this.root, screenSize.getWidth(), screenSize.getHeight(), Color.SKYBLUE);
         VBox buttonsGroup = new VBox();
-        Text welcome = new Text("Bun venit la jocul de table");
+        Text welcome = new Text(Main.contentScreens.getString("welcome"));
+        Button buttonNetworkPlay = new Button(Main.contentButtons.getString("networkBtn"));
+        Button buttonExit = new Button("Exit");
+        Button playOffline = new Button(Main.contentButtons.getString("singleBtn"));
         welcome.setFont(Font.font("Comic Sans", 50));
         welcome.setFill(Color.ORANGERED);
 
         welcome.setX(this.menuScene.getWidth() / 2 - welcome.getLayoutBounds().getWidth() / 2);
         welcome.setY(100);
 
-        Button buttonNetworkPlay = new Button("Joaca in retea");
-        Button buttonExit = new Button("Exit");
-        Button playOffline = new Button("Joaca singur");
-        ;
 
         playOffline.setMinSize(80, 30);
         playOffline.setMaxSize(200, 30);
@@ -52,13 +52,13 @@ public class MenuScene {
         buttonExit.setWrapText(true);
         playOffline.setWrapText(true);
 
+
         playOffline.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 ScenesController.setNewScene(ScenesFactory.getGameScene().getScene());
             }
         });
-
         buttonExit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -70,12 +70,13 @@ public class MenuScene {
             @Override
             public void handle(ActionEvent actionEvent) {
                 ScenesController.setNewScene(ScenesFactory.getLoadingScene().getScene());
+                ScenesController.setNewScene(ScenesFactory.getMenuScene().getScene());
             }
         });
-        buttonsGroup.getChildren().addAll(playOffline,buttonNetworkPlay, buttonExit);
+        buttonsGroup.getChildren().addAll(playOffline, buttonNetworkPlay, buttonExit);
         buttonsGroup.setAlignment(Pos.CENTER);
-        buttonsGroup.setLayoutY(screenSize.getHeight()/3);
-        buttonsGroup.setLayoutX(screenSize.getWidth()/2-50);
+        buttonsGroup.setLayoutY(screenSize.getHeight() / 3);
+        buttonsGroup.setLayoutX(screenSize.getWidth() / 2 - 100);
         buttonsGroup.setSpacing(50);
         root.getChildren().addAll(welcome, buttonsGroup);
     }

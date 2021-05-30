@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import tablecomponents.Dices;
+import sample.Main;
 
 import java.awt.*;
 
@@ -31,17 +31,19 @@ public class WinnerScene {
         winnerTextScene=new Scene(this.root, screenSize.getWidth(), screenSize.getHeight(), Color.SKYBLUE);
         message.setFont(Font.font("Comic Sans", 35));
         message.setFill(Color.ORANGERED);
-        Button menuBtn = new Button("Revenire meniu");
+        Button menuBtn = new Button(Main.contentButtons.getString("menuBack"));
         menuBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                Group newRoot = new Group();
+                ScenesFactory.setGameScene(newRoot,stage);
                 ScenesController.setNewScene(ScenesFactory.getMenuScene().getScene());
             }
         });
         container.getChildren().addAll(message,menuBtn);
         container.setAlignment(Pos.CENTER);
         container.setLayoutY(screenSize.getHeight()/3);
-        container.setLayoutX(screenSize.getWidth()/2-50);
+        container.setLayoutX(screenSize.getWidth()/2-200);
         container.setSpacing(150);
         root.getChildren().addAll(container);
     }
