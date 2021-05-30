@@ -3,6 +3,7 @@ Repository unde am creat proiectul ce implementeaza jocul de table
 In esenta, jocul in sine reprezinta o tabla de joc pe care o poate folosi doar un jucator (sau 2 daca se joaca cu randul)     
 Tabla valideaza toate miscarile unui jucator (mutari de checker, scoateri, mutari posibile etc.)    
 Cele mai importante lucruri la table in acest proiect sunt folosirea de JavaFX si realizarea acesteia in 3 limbi: romana, engleza si franceza.     
+Proiectul in sine se afla in folderul Backgammon    
 Contributii:      
 
 Moraru George-Octavian 2A3    
